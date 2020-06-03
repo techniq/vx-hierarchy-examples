@@ -1,0 +1,28 @@
+{
+  "name": "vx-zoomable-icicle-example-with-react-spring-hooks",
+  "version": "1.0.0",
+  "description": "",
+  "keywords": [],
+  "main": "src/index.js",
+  "dependencies": {
+    "@vx/group": "0.0.196",
+    "@vx/hierarchy": "0.0.196",
+    "@vx/responsive": "0.0.196",
+    "d3-hierarchy": "1.1.9",
+    "d3-interpolate": "1.4.0",
+    "d3-scale": "3.2.1",
+    "d3-scale-chromatic": "1.5.0",
+    "d3-shape": "1.3.7",
+    "react": "16.13.1",
+    "react-dom": "16.13.1",
+    "react-scripts": "3.4.1",
+    "react-spring": "8.0.27"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  },
+  "browserslist": [">0.2%", "not dead", "not ie <= 11", "not op_mini all"]
+}

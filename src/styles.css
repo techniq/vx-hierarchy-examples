@@ -1,0 +1,6 @@
+.path {
+  will-change: d;
+}
+.path:hover {
+  cursor: pointer;
+}
