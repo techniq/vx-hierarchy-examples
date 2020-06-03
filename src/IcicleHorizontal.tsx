@@ -7,6 +7,8 @@ import { Group } from '@vx/group';
 import { Partition } from '@vx/hierarchy';
 import { useSpring, animated } from 'react-spring';
 
+// import Partition from './Partition';
+
 // const color = scaleOrdinal().range([
 //   "#FE938C",
 //   "#E6B89C",
@@ -17,38 +19,32 @@ import { useSpring, animated } from 'react-spring';
 // const color = scaleOrdinal(schemeCategory20c);
 const format = d3format(',d');
 
-function IcicleVertical(props) {
+function IcicleHorizontal(props: any) {
   const {
     root,
     width,
     height,
-    margin = { top: 0, left: 0, right: 0, bottom: 0 }
+    margin = { top: 0, left: 0, right: 0, bottom: 0 },
   } = props;
 
   const color = scaleOrdinal(
     quantize(interpolateRainbow, root.children.length + 1)
   );
 
-  console.log({ root });
-
   const [state, setState] = useState({
     xDomain: [0, props.width],
     xRange: [0, props.width],
     yDomain: [0, props.height],
-    yRange: [0, props.height]
+    yRange: [0, props.height],
   });
 
   // console.log({ props });
 
   const xScale = useRef(
-    scaleLinear()
-      .domain(state.xDomain)
-      .range(state.xRange)
+    scaleLinear().domain(state.xDomain).range(state.xRange)
   );
   const yScale = useRef(
-    scaleLinear()
-      .domain(state.yDomain)
-      .range(state.yRange)
+    scaleLinear().domain(state.yDomain).range(state.yRange)
   );
 
   // useEffect(() => {
@@ -72,8 +68,8 @@ function IcicleVertical(props) {
   const yd = d3interpolate(yScale.current.domain(), state.yDomain);
   const yr = d3interpolate(yScale.current.range(), state.yRange);
 
+  // @ts-ignore
   const { t } = useSpring({
-    native: true,
     reset: true,
     from: { t: 0 },
     to: { t: 1 },
@@ -81,25 +77,25 @@ function IcicleVertical(props) {
       mass: 5,
       tension: 500,
       friction: 100,
-      precision: 0.00001
+      precision: 0.00001,
     },
-    onFrame: ({ t }) => {
+    onFrame: ({ t }: { t: number }) => {
       xScale.current.domain(xd(t));
       yScale.current.domain(yd(t)).range(yr(t));
-    }
+    },
   });
 
   return (
     <svg width={width} height={height}>
-      <Partition
+      <Partition<any>
         top={margin.top}
         left={margin.left}
         root={root}
-        size={[height, width]}
+        size={[width, height]}
         padding={1}
         round={true}
       >
-        {data => (
+        {(data) => (
           <Group>
             {data.descendants().map((node, i) => (
               <animated.g
@@ -108,32 +104,38 @@ function IcicleVertical(props) {
                 //transform={`translate(${xScale.current(node.x0)}, ${yScale.current(node.y0)})`}
                 transform={t.interpolate(
                   () =>
-                    `translate(${xScale.current(node.y0)}, ${yScale.current(
-                      node.x0
+                    `translate(${xScale.current(node.x0)}, ${yScale.current(
+                      node.y0
                     )})`
                 )}
                 key={`node-${i}`}
+                // onClick={() => {
+                //   setState({
+                //     ...state,
+                //     xDomain: [node.x0, node.x1],
+                //     yDomain: [node.y0, props.height],
+                //     yRange: [node.depth ? 20 : 0, props.height],
+                //   });
+                // }}
                 onClick={() => {
-                  console.log({ node });
-
                   if (
-                    node.y0 === state.xDomain[0] &&
-                    node.x0 === state.yDomain[0] &&
+                    node.x0 === state.xDomain[0] &&
+                    node.y0 === state.yDomain[0] &&
                     node.parent
                   ) {
                     // Already selected, use parent
                     setState({
                       ...state,
-                      xDomain: [node.parent.y0, props.width],
-                      yDomain: [node.parent.x0, node.parent.x1],
-                      yRange: [0, props.height]
+                      xDomain: [node.parent.x0, node.parent.x1],
+                      yDomain: [node.parent.y0, props.height],
+                      yRange: [0, props.height],
                     });
                   } else {
                     setState({
                       ...state,
-                      xDomain: [node.y0, props.width],
-                      yDomain: [node.x0, node.x1],
-                      yRange: [0, props.height]
+                      xDomain: [node.x0, node.x1],
+                      yDomain: [node.y0, props.height],
+                      yRange: [0, props.height],
                     });
                   }
                 }}
@@ -141,10 +143,10 @@ function IcicleVertical(props) {
                 <animated.rect
                   id={`rect-${i}`}
                   width={t.interpolate(
-                    () => xScale.current(node.y1) - xScale.current(node.y0)
+                    () => xScale.current(node.x1) - xScale.current(node.x0)
                   )}
                   height={t.interpolate(
-                    () => yScale.current(node.x1) - yScale.current(node.x0)
+                    () => yScale.current(node.y1) - yScale.current(node.y0)
                   )}
                   fill={
                     node.children
@@ -164,18 +166,18 @@ function IcicleVertical(props) {
                   clipPath={`url(#clip-${i})`}
                   style={{
                     font: '10px sans-serif',
-                    fontWeight: 'bold'
+                    fontWeight: 'bold',
                   }}
                 >
                   {node.data.name}
                   <tspan
                     style={{
                       fontSize: 9,
-                      fillOpacity: 0.8
+                      fillOpacity: 0.8,
                     }}
                   >
                     {' '}
-                    {format(node.value)}
+                    {node.value && format(node.value)}
                   </tspan>
                 </text>
               </animated.g>
@@ -187,4 +189,4 @@ function IcicleVertical(props) {
   );
 }
 
-export default IcicleVertical;
+export default IcicleHorizontal;
