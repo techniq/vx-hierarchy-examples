@@ -61,9 +61,9 @@ export default function App() {
       <ParentSize>
         {(size) =>
           size.ref && layout === 'IcicleVertical' ? (
-            <IcicleVertical root={root} width={size.width} height={600} />
+            <IcicleVertical root={root} width={size.width} height={800} />
           ) : layout === 'IcicleHorizontal' ? (
-            <IcicleHorizontal root={root} width={size.width} height={600} />
+            <IcicleHorizontal root={root} width={size.width} height={800} />
           ) : layout === 'Sunburst' ? (
             <div
               style={{
@@ -76,8 +76,8 @@ export default function App() {
             >
               <Sunburst
                 root={root}
-                width={size.width * 0.5}
-                height={size.width * 0.5}
+                width={size.width * 0.8}
+                height={size.width * 0.8}
               />
             </div>
           ) : null
