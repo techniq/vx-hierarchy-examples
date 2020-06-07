@@ -7,16 +7,6 @@ import { Group } from '@vx/group';
 import { Partition } from '@vx/hierarchy';
 import { useSpring, animated } from 'react-spring';
 
-// import Partition from './Partition';
-
-// const color = scaleOrdinal().range([
-//   "#FE938C",
-//   "#E6B89C",
-//   "#EAD2AC",
-//   "#9CAFB7",
-//   "#4281A4",
-// ]);
-// const color = scaleOrdinal(schemeCategory20c);
 const format = d3format(',d');
 
 function IcicleHorizontal(props: any) {

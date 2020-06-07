@@ -9,6 +9,7 @@ import { useSpring, animated } from 'react-spring';
 
 const format = d3format(',d');
 
+// Derived from: https://observablehq.com/@d3/zoomable-iciclep
 function IcicleVertical(props: any) {
   const {
     root,

@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "keywords": [],
+  "homepage": "https://codesandbox.io/s/github/techniq/vx-hierarchy-examples",
   "main": "src/index.tsx",
   "dependencies": {
     "@vx/group": "0.0.196",
