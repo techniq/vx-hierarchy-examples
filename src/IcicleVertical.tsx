@@ -22,16 +22,12 @@ function IcicleVertical(props: any) {
     quantize(interpolateRainbow, root.children.length + 1)
   );
 
-  console.log({ root });
-
   const [state, setState] = useState({
     xDomain: [0, props.width],
     xRange: [0, props.width],
     yDomain: [0, props.height],
     yRange: [0, props.height],
   });
-
-  // console.log({ props });
 
   const xScale = useRef(
     scaleLinear().domain(state.xDomain).range(state.xRange)
@@ -67,9 +63,6 @@ function IcicleVertical(props: any) {
     from: { t: 0 },
     to: { t: 1 },
     config: {
-      mass: 5,
-      tension: 500,
-      friction: 100,
       precision: 0.00001,
     },
     onFrame: ({ t }: { t: number }) => {
@@ -78,13 +71,16 @@ function IcicleVertical(props: any) {
     },
   });
 
+  const displayColumns = 3;
+
   return (
     <svg width={width} height={height}>
       <Partition<{ name: string; id: string }>
         top={margin.top}
         left={margin.left}
         root={root}
-        size={[height, width]}
+        // size={[height, width]}
+        size={[height, ((root.height + 1) * width) / displayColumns]}
         padding={1}
         round={true}
       >
@@ -105,26 +101,25 @@ function IcicleVertical(props: any) {
                 onClick={() => {
                   console.log({ node });
 
-                  if (
+                  // If node is already selected, target parent (go up)
+                  const target =
                     node.y0 === state.xDomain[0] &&
                     node.x0 === state.yDomain[0] &&
                     node.parent
-                  ) {
-                    // Already selected, use parent
-                    setState({
-                      ...state,
-                      xDomain: [node.parent.y0, props.width],
-                      yDomain: [node.parent.x0, node.parent.x1],
-                      yRange: [0, props.height],
-                    });
-                  } else {
-                    setState({
-                      ...state,
-                      xDomain: [node.y0, props.width],
-                      yDomain: [node.x0, node.x1],
-                      yRange: [0, props.height],
-                    });
-                  }
+                      ? node.parent
+                      : node;
+
+                  setState({
+                    ...state,
+                    // xDomain: [target.y0, props.width],
+                    xDomain: [
+                      target.y0,
+                      ((root.height + target.depth - 1) * props.width) /
+                        displayColumns,
+                    ],
+                    yDomain: [target.x0, target.x1],
+                    yRange: [0, props.height],
+                  });
                 }}
               >
                 <animated.rect
