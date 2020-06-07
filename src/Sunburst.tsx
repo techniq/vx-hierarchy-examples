@@ -1,11 +1,12 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React from 'react';
 import { arc as d3arc } from 'd3-shape';
 import { scaleLinear, scaleSqrt, scaleOrdinal } from 'd3-scale';
-import { interpolate as d3interpolate, quantize } from 'd3-interpolate';
+import { quantize } from 'd3-interpolate';
 import { interpolateRainbow } from 'd3-scale-chromatic';
 import { Group } from '@vx/group';
 import { Partition } from '@vx/hierarchy';
-import { useSpring, animated } from 'react-spring';
+import { animated } from 'react-spring';
+import { useAnimatedScale } from './scales/AnimatedScale';
 
 // Derived from: https://observablehq.com/@d3/zoomable-sunburst
 function Sunburst(props: any) {
@@ -20,51 +21,25 @@ function Sunburst(props: any) {
     quantize(interpolateRainbow, root.children.length + 1)
   );
 
-  const [state, setState] = useState({
-    xDomain: [0, 1],
-    xRange: [0, 2 * Math.PI],
-    yDomain: [0, 1],
-    yRange: [0, props.width / 2],
+  const xAnimatedScale = useAnimatedScale(scaleLinear, {
+    domain: [0, 1],
+    range: [0, 2 * Math.PI],
   });
 
-  const xScale = useRef(
-    scaleLinear().domain(state.xDomain).range(state.xRange)
-  );
-  const yScale = useRef(scaleSqrt().domain(state.yDomain).range(state.yRange));
-
-  useEffect(() => {
-    setState((state) => ({
-      ...state,
-      yRange: [state.yRange[0], props.width / 2],
-    }));
-  }, [props.width]);
+  const yAnimatedScale = useAnimatedScale(scaleSqrt, {
+    domain: [0, 1],
+    range: [0, props.width / 2],
+  });
 
   const arc = d3arc<any, any>()
-    .startAngle((d) => Math.max(0, Math.min(2 * Math.PI, xScale.current(d.x0))))
-    .endAngle((d) => Math.max(0, Math.min(2 * Math.PI, xScale.current(d.x1))))
-    .innerRadius((d) => Math.max(0, yScale.current(d.y0)))
-    .outerRadius((d) => Math.max(0, yScale.current(d.y1)));
-
-  const xd = d3interpolate(xScale.current.domain(), state.xDomain);
-  const yd = d3interpolate(yScale.current.domain(), state.yDomain);
-  const yr = d3interpolate(yScale.current.range(), state.yRange);
-
-  // @ts-ignore
-  const { t } = useSpring({
-    reset: true,
-    from: { t: 0 },
-    to: { t: 1 },
-    config: {
-      mass: 5,
-      tension: 500,
-      friction: 100,
-      precision: 0.00001,
-    },
-    onFrame: ({ t }: { t: number }) => {
-      xScale.current.domain(xd(t));
-      yScale.current.domain(yd(t)).range(yr(t));
-    },
-  });
+    .startAngle((d) =>
+      Math.max(0, Math.min(2 * Math.PI, xAnimatedScale.scale(d.x0)))
+    )
+    .endAngle((d) =>
+      Math.max(0, Math.min(2 * Math.PI, xAnimatedScale.scale(d.x1)))
+    )
+    .innerRadius((d) => Math.max(0, yAnimatedScale.scale(d.y0)))
+    .outerRadius((d) => Math.max(0, yAnimatedScale.scale(d.y1)));
 
   return (
     <svg width={width} height={height}>
@@ -74,7 +49,8 @@ function Sunburst(props: any) {
             {data.descendants().map((node, i) => (
               <animated.path
                 className="path"
-                d={t.interpolate(() => arc(node))}
+                // TODO: Interpolate should be for both scales
+                d={xAnimatedScale.interpolate(() => arc(node))}
                 stroke="#373737"
                 strokeWidth="2"
                 fill={color(
@@ -82,12 +58,15 @@ function Sunburst(props: any) {
                 )}
                 fillRule="evenodd"
                 onClick={() => {
-                  setState({
-                    ...state,
-                    xDomain: [node.x0, node.x1],
-                    yDomain: [node.y0, 1],
-                    yRange: [node.y0 ? 20 : 0, props.width / 2],
-                  });
+                  xAnimatedScale.setState((prevState) => ({
+                    ...prevState,
+                    domain: [node.x0, node.x1],
+                  }));
+                  yAnimatedScale.setState((prevState) => ({
+                    ...prevState,
+                    domain: [node.y0, 1],
+                    range: [node.y0 ? 20 : 0, props.width / 2],
+                  }));
                 }}
                 key={i}
               />
