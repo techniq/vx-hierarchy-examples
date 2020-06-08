@@ -56,6 +56,7 @@ function Sunburst(props: any) {
                 fill={color(
                   (node.children ? node.data : node.parent?.data).name
                 )}
+                fillOpacity={node.children ? 0.7 : 0.3}
                 fillRule="evenodd"
                 onClick={() => {
                   xAnimatedScale.setState((prevState) => ({
