@@ -5,21 +5,22 @@ import data from './data';
 import IcicleHorizontal from './IcicleHorizontal';
 import IcicleVertical from './IcicleVertical';
 import Sunburst from './Sunburst';
+import Treemap from './Treemap';
 import './styles.css';
-
-// const root = hierarchy(data)
-//   .sum(d => d.size);
 
 const root = hierarchy<any>(data)
   .eachBefore(
     (d) => (d.data.id = (d.parent ? d.parent.data.id + '.' : '') + d.data.name)
   )
   .sum((d) => d.size)
-  .sort((a, b) => (b.value ?? 0) - (a.value ?? 0));
+  // .sort((a, b) => (b.value ?? 0) - (a.value ?? 0));
+  .sort((a, b) => b.height - a.height || (b.value ?? 0) - (a.value ?? 0));
+
+console.log({ root });
 
 export default function App() {
   const [layout, setLayout] = useState<
-    'IcicleVertical' | 'IcicleHorizontal' | 'Sunburst'
+    'IcicleVertical' | 'IcicleHorizontal' | 'Sunburst' | 'Treemap'
   >('IcicleVertical');
 
   return (
@@ -47,6 +48,14 @@ export default function App() {
             onChange={() => setLayout('IcicleHorizontal')}
           />
           Icicle Horizontal
+        </label>
+        <label>
+          <input
+            type="radio"
+            checked={layout === 'Treemap'}
+            onChange={() => setLayout('Treemap')}
+          />
+          Treemap
         </label>
         <label>
           <input
@@ -80,6 +89,8 @@ export default function App() {
                 height={size.width * 0.8}
               />
             </div>
+          ) : layout === 'Treemap' ? (
+            <Treemap root={root} width={960} height={600} />
           ) : null
         }
       </ParentSize>
