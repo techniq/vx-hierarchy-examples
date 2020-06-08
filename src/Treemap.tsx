@@ -74,9 +74,22 @@ type NodeProps = {
 function Node(props: NodeProps) {
   const { xAnimatedScale, yAnimatedScale } = props;
 
-  const [selectedNode, setSelectedNode] = useState<
-    HierarchyRectangularNode<any>
-  >();
+  const [selectedNode, setSelectedNode] = useState<HierarchyRectangularNode<
+    any
+  > | null>();
+
+  const outsideClickRef = React.useRef<SVGGElement>(null);
+  useClickOutside(outsideClickRef, () => {
+    xAnimatedScale.setState((prevState) => ({
+      ...prevState,
+      domain: [props.rootNode.x0, props.rootNode.x1],
+    }));
+    yAnimatedScale.setState((prevState) => ({
+      ...prevState,
+      domain: [props.rootNode.y0, props.rootNode.y1],
+    }));
+    setSelectedNode(null);
+  });
 
   return (
     <>
@@ -105,6 +118,7 @@ function Node(props: NodeProps) {
                 setSelectedNode(node);
               }
             }}
+            ref={outsideClickRef}
           >
             <animated.rect
               id={`rect-${nodeId}`}
@@ -151,6 +165,23 @@ function Node(props: NodeProps) {
       )}
     </>
   );
+}
+
+function useClickOutside(ref: React.RefObject<any>, callback: () => any) {
+  const handleClick = (e: MouseEvent) => {
+    // if (ref.current && !ref.current.contains(e.target)) {
+    //   callback();
+    // }
+    if (ref.current && e.target == document.documentElement) {
+      callback();
+    }
+  };
+  React.useEffect(() => {
+    document.addEventListener('click', handleClick);
+    return () => {
+      document.removeEventListener('click', handleClick);
+    };
+  });
 }
 
 export default Treemap;
