@@ -4,7 +4,7 @@ import { scaleOrdinal, ScaleOrdinal, scaleLinear, ScaleLinear } from 'd3-scale';
 import { quantize } from 'd3-interpolate';
 import { interpolateRainbow } from 'd3-scale-chromatic';
 import { Treemap as VxTreemap } from '@vx/hierarchy';
-import { animated } from 'react-spring';
+import { animated, useTransition } from 'react-spring';
 import { useAnimatedScale } from './scales/AnimatedScale';
 
 // Derived from: https://observablehq.com/@d3/zoomable-treemap
@@ -72,7 +72,7 @@ type NodeProps = {
 };
 
 function Node(props: NodeProps) {
-  const { xAnimatedScale, yAnimatedScale } = props;
+  const { color, xAnimatedScale, yAnimatedScale } = props;
 
   const [selectedNode, setSelectedNode] = useState<HierarchyRectangularNode<
     any
@@ -89,6 +89,12 @@ function Node(props: NodeProps) {
       domain: [props.rootNode.y0, props.rootNode.y1],
     }));
     setSelectedNode(null);
+  });
+
+  const transitions = useTransition(selectedNode, null, {
+    from: { opacity: 0 },
+    enter: { opacity: 1 },
+    leave: { opacity: 0 },
   });
 
   return (
@@ -154,13 +160,18 @@ function Node(props: NodeProps) {
           </animated.g>
         );
       })}
-      {selectedNode && (
-        <Node
-          rootNode={selectedNode}
-          color={props.color}
-          xAnimatedScale={xAnimatedScale}
-          yAnimatedScale={yAnimatedScale}
-        />
+      {transitions.map(
+        ({ item, key, props }) =>
+          item && (
+            <animated.g style={props} key={key}>
+              <Node
+                rootNode={item}
+                color={color}
+                xAnimatedScale={xAnimatedScale}
+                yAnimatedScale={yAnimatedScale}
+              />
+            </animated.g>
+          )
       )}
       )}
     </>
