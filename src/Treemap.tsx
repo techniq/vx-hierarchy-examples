@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
+
 import { treemapBinary, HierarchyRectangularNode } from 'd3-hierarchy';
 import { scaleOrdinal, ScaleOrdinal, scaleLinear, ScaleLinear } from 'd3-scale';
 import { quantize } from 'd3-interpolate';
 import { interpolateRainbow } from 'd3-scale-chromatic';
+import { format as d3format } from 'd3-format';
 import { Treemap as VxTreemap } from '@vx/hierarchy';
 import { animated, useTransition } from 'react-spring';
 import { useAnimatedScale } from './scales/AnimatedScale';
+
+const format = d3format(',d');
 
 // Derived from: https://observablehq.com/@d3/zoomable-treemap
 function Treemap(props: any) {
@@ -156,6 +160,17 @@ function Node(props: NodeProps) {
               }}
             >
               {node.data.name} ({node.children?.length ?? 0})
+            </text>
+            <text
+              x={4}
+              y={25}
+              clipPath={`url(#clip-${nodeId})`}
+              style={{
+                font: '10px sans-serif',
+                opacity: 0.5,
+              }}
+            >
+              {node.value && format(node.value)}
             </text>
           </animated.g>
         );
