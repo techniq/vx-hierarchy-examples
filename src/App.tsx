@@ -1,14 +1,26 @@
 import React, { useState } from 'react';
 import { hierarchy } from 'd3-hierarchy';
 import { ParentSize } from '@vx/responsive';
-import data from './data';
+import preval from 'babel-plugin-preval/macro';
+
+import hierarchyData from './data/hierarchy';
 import IcicleHorizontal from './IcicleHorizontal';
 import IcicleVertical from './IcicleVertical';
 import Sunburst from './Sunburst';
 import Treemap from './Treemap';
+import Sankey from './Sankey';
 import './styles.css';
+import { graphFromCsv } from './graph/utils';
 
-const root = hierarchy<any>(data)
+import graph from './data/graph';
+// const csv = preval`
+//   const fs = require('fs')
+//   module.exports = fs.readFileSync(require.resolve('./data/graph.csv'), 'utf8')
+// `;
+// const graph = graphFromCsv(csv);
+console.log({ graph });
+
+const root = hierarchy<any>(hierarchyData)
   .eachBefore(
     (d) => (d.data.id = (d.parent ? d.parent.data.id + '.' : '') + d.data.name)
   )
@@ -20,8 +32,8 @@ console.log({ root });
 
 export default function App() {
   const [layout, setLayout] = useState<
-    'IcicleVertical' | 'IcicleHorizontal' | 'Sunburst' | 'Treemap'
-  >('IcicleVertical');
+    'IcicleVertical' | 'IcicleHorizontal' | 'Sunburst' | 'Treemap' | 'Sankey'
+  >('Sankey');
 
   return (
     <div>
@@ -65,6 +77,14 @@ export default function App() {
           />
           Sunburst
         </label>
+        <label>
+          <input
+            type="radio"
+            checked={layout === 'Sankey'}
+            onChange={() => setLayout('Sankey')}
+          />
+          Sankey
+        </label>
       </div>
 
       <ParentSize>
@@ -91,6 +111,13 @@ export default function App() {
             </div>
           ) : layout === 'Treemap' ? (
             <Treemap root={root} width={960} height={600} />
+          ) : layout === 'Sankey' ? (
+            <Sankey
+              graph={graph}
+              // nodeId={(d: any) => d.name}
+              width={960}
+              height={600}
+            />
           ) : null
         }
       </ParentSize>
