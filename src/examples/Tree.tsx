@@ -66,8 +66,7 @@ function Tree(props: TreeProps) {
   const root = hierarchy(data, (d: any) =>
     expandedNodeKeys.includes(props.getKey(d)) ? d.children : null
   );
-
-  // const root = hierarchy(data); // Try showing all children
+  // Expand all children by default
   // useEffect(() => {
   //   const allNodeIds: Array<string | number> = [];
   //   const rootAllChildren = hierarchy(data);
@@ -110,7 +109,12 @@ function Tree(props: TreeProps) {
   };
 
   return (
-    <Box position="relative">
+    <Box
+      position="relative"
+      bgcolor="rgba(0,0,0,0.05)"
+      border={1}
+      borderColor="rgba(0,0,0,.1)"
+    >
       <Zoom
         width={width}
         height={height}
@@ -238,8 +242,10 @@ function Tree(props: TreeProps) {
                               prevState.filter((key) => key !== nodeKey)
                             );
                           } else {
+                            // Probably not good to edit the node directly
                             node.data.x0 = node.x;
                             node.data.y0 = node.y;
+
                             setExpandedNodeKeys((prevState) => [
                               ...prevState,
                               nodeKey,

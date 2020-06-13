@@ -52,8 +52,12 @@ function Nodes(props: NodesProps) {
         const collapsedParent = findCollapsedParent(node.parent);
         const { x, y } = translateCoords(
           {
-            x: collapsedParent ? collapsedParent.data.x0 : 0,
-            y: collapsedParent ? collapsedParent.data.y0 : 0,
+            x: collapsedParent
+              ? collapsedParent.data.x0 ?? collapsedParent.x
+              : 0,
+            y: collapsedParent
+              ? collapsedParent.data.y0 ?? collapsedParent.y
+              : 0,
           },
           props.layout,
           props.orientation

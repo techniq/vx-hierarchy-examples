@@ -26,10 +26,10 @@ function Links(props: LinksProps) {
     (link) => `${getKey(link.source.data)}_${getKey(link.target.data)}`,
     {
       from: ({ source, target }) => ({
-        sx: source.data.x0,
-        sy: source.data.y0,
-        tx: source.data.x0,
-        ty: source.data.y0,
+        sx: source.data.x0 ?? source.x,
+        sy: source.data.y0 ?? source.y,
+        tx: source.data.x0 ?? target.x,
+        ty: source.data.y0 ?? target.y,
       }),
       enter: ({ source, target }) => ({
         sx: source.x,
@@ -46,10 +46,10 @@ function Links(props: LinksProps) {
       leave: ({ source, target }) => {
         const collapsedParent = findCollapsedParent(source);
         return {
-          sx: collapsedParent.data.x0,
-          sy: collapsedParent.data.y0,
-          tx: collapsedParent.data.x0,
-          ty: collapsedParent.data.y0,
+          sx: collapsedParent.data.x0 ?? collapsedParent.x,
+          sy: collapsedParent.data.y0 ?? collapsedParent.y,
+          tx: collapsedParent.data.x0 ?? collapsedParent.x,
+          ty: collapsedParent.data.y0 ?? collapsedParent.y,
         };
       },
     }
