@@ -106,8 +106,8 @@ export default function App() {
             >
               <Sunburst
                 root={root}
-                width={size.width * 0.8}
-                height={size.width * 0.8}
+                width={Math.min(size.width, size.height) * 0.8}
+                height={Math.min(size.width, size.height) * 0.8}
               />
             </div>
           ) : layout === 'Treemap' ? (
