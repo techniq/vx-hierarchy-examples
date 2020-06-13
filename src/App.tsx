@@ -11,7 +11,7 @@ import Treemap from './examples/Treemap';
 import Sankey from './examples/Sankey';
 import './styles.css';
 import { graphFromCsv } from './graph/utils';
-// import graph from './data/graph';
+import graph from './data/graph';
 
 const root = hierarchy<any>(hierarchyData)
   .eachBefore(
@@ -23,11 +23,11 @@ const root = hierarchy<any>(hierarchyData)
 
 console.log({ root });
 
-const csv = preval`
-  const fs = require('fs')
-  module.exports = fs.readFileSync(require.resolve('./data/graph.csv'), 'utf8')
-`;
-const graph = graphFromCsv(csv);
+// const csv = preval`
+//   const fs = require('fs')
+//   module.exports = fs.readFileSync(require.resolve('./data/graph.csv'), 'utf8')
+// `;
+// const graph = graphFromCsv(csv);
 // const graph = {
 //   nodes: root.descendants().map((node) => node.data),
 //   links: root.links().map((link) => {
@@ -125,7 +125,7 @@ export default function App() {
           ) : layout === 'Sankey' ? (
             <Sankey
               graph={graph}
-              nodeId={(d: any) => d.name}
+              // nodeId={(d: any) => d.name}
               width={size.width - 100}
               height={800}
               // height={10000}
