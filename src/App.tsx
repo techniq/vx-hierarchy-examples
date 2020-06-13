@@ -3,13 +3,18 @@ import { hierarchy } from 'd3-hierarchy';
 import { ParentSize } from '@vx/responsive';
 import preval from 'babel-plugin-preval/macro';
 
+import './styles.css';
+
 import hierarchyData from './data/hierarchy';
 import IcicleHorizontal from './examples/IcicleHorizontal';
 import IcicleVertical from './examples/IcicleVertical';
 import Sunburst from './examples/Sunburst';
-import Treemap from './examples/Treemap';
 import Sankey from './examples/Sankey';
-import './styles.css';
+import Tree from './examples/Tree';
+import Treemap from './examples/Treemap';
+
+import Node from './examples/Node';
+
 import { graphFromCsv } from './graph/utils';
 import graph from './data/graph';
 
@@ -42,8 +47,13 @@ console.log({ graph });
 
 export default function App() {
   const [layout, setLayout] = useState<
-    'IcicleVertical' | 'IcicleHorizontal' | 'Sunburst' | 'Treemap' | 'Sankey'
-  >('Sankey');
+    | 'IcicleVertical'
+    | 'IcicleHorizontal'
+    | 'Sunburst'
+    | 'Treemap'
+    | 'Sankey'
+    | 'Tree'
+  >('Tree');
 
   return (
     <div>
@@ -95,6 +105,14 @@ export default function App() {
           />
           Sankey
         </label>
+        <label>
+          <input
+            type="radio"
+            checked={layout === 'Tree'}
+            onChange={() => setLayout('Tree')}
+          />
+          Tree
+        </label>
       </div>
 
       <ParentSize>
@@ -120,8 +138,6 @@ export default function App() {
                 height={Math.min(size.width, size.height) * 0.8}
               />
             </div>
-          ) : layout === 'Treemap' ? (
-            <Treemap root={root} width={960} height={600} />
           ) : layout === 'Sankey' ? (
             <Sankey
               graph={graph}
@@ -129,6 +145,24 @@ export default function App() {
               width={size.width - 100}
               height={800}
               // height={10000}
+            />
+          ) : layout === 'Treemap' ? (
+            <Treemap root={root} width={960} height={600} />
+          ) : layout === 'Tree' ? (
+            <Tree
+              data={hierarchyData}
+              getKey={(d) => d.id}
+              renderNode={(node, onClick) => {
+                // console.log('node', node);
+                return (
+                  <Node node={node} onClick={onClick} width={192} height={24} />
+                );
+              }}
+              nodeWidth={192 * 1.5}
+              nodeHeight={24 + 16}
+              width={size.width}
+              // height={size.height}
+              height={800}
             />
           ) : null)
         }
