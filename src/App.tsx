@@ -28,7 +28,16 @@ const csv = preval`
   module.exports = fs.readFileSync(require.resolve('./data/graph.csv'), 'utf8')
 `;
 const graph = graphFromCsv(csv);
-// const graph = { nodes: root.descendants(), links: root.links() };
+// const graph = {
+//   nodes: root.descendants().map((node) => node.data),
+//   links: root.links().map((link) => {
+//     return {
+//       source: link.source.data.name,
+//       target: link.target.data.name,
+//       value: link.target.value,
+//     };
+//   }),
+// };
 console.log({ graph });
 
 export default function App() {
@@ -90,7 +99,8 @@ export default function App() {
 
       <ParentSize>
         {(size) =>
-          size.ref && layout === 'IcicleVertical' ? (
+          size.ref &&
+          (layout === 'IcicleVertical' ? (
             <IcicleVertical root={root} width={size.width} height={800} />
           ) : layout === 'IcicleHorizontal' ? (
             <IcicleHorizontal root={root} width={size.width} height={800} />
@@ -116,10 +126,11 @@ export default function App() {
             <Sankey
               graph={graph}
               nodeId={(d: any) => d.name}
-              width={960}
-              height={600}
+              width={size.width - 100}
+              height={800}
+              // height={10000}
             />
-          ) : null
+          ) : null)
         }
       </ParentSize>
     </div>
