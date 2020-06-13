@@ -123,8 +123,7 @@ function SankeyExample(props: any) {
                 {data.links.map((link, i) => (
                   <path
                     key={`link-${i}`}
-                    // @ts-ignore
-                    d={path(link)}
+                    d={path(link) ?? undefined}
                     stroke={highlightLinkIndexes.includes(i) ? 'red' : 'black'}
                     strokeWidth={Math.max(1, link.width)}
                     opacity={highlightLinkIndexes.includes(i) ? 0.5 : 0.1}
