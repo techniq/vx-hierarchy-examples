@@ -7,7 +7,7 @@ import { extent } from 'd3-array';
 import { LinkHorizontal } from '@vx/shape';
 import { linkHorizontal } from 'd3-shape';
 
-import Sankey from '../graph/Sankey';
+import Sankey, { SankeyProps } from '../graph/Sankey';
 
 const path = linkHorizontal()
   // @ts-ignore
@@ -31,11 +31,46 @@ function SankeyExample(props: any) {
     ...sankeyProps
   } = props;
 
+  const [nodeAlign, setNodeAlign] = useState<
+    SankeyProps<unknown, unknown>['nodeAlign']
+  >('justify');
   const [nodePadding, setNodePadding] = useState(10);
   const [highlightLinkIndexes, setHighlightLinkIndexes] = useState<any[]>([]);
 
   return (
     <div>
+      <label>
+        <input
+          type="radio"
+          checked={nodeAlign === 'justify'}
+          onChange={() => setNodeAlign('justify')}
+        />
+        justify
+      </label>
+      <label>
+        <input
+          type="radio"
+          checked={nodeAlign === 'left'}
+          onChange={() => setNodeAlign('left')}
+        />
+        left
+      </label>
+      <label>
+        <input
+          type="radio"
+          checked={nodeAlign === 'center'}
+          onChange={() => setNodeAlign('center')}
+        />
+        center
+      </label>
+      <label>
+        <input
+          type="radio"
+          checked={nodeAlign === 'right'}
+          onChange={() => setNodeAlign('right')}
+        />
+        right
+      </label>
       <div>
         <input
           type="range"
@@ -61,6 +96,7 @@ function SankeyExample(props: any) {
             [1, 1],
             [width - 1, height - 6],
           ]}
+          nodeAlign={nodeAlign}
           {...sankeyProps}
         >
           {(data) => (

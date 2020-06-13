@@ -6,6 +6,10 @@ import {
   SankeyGraph,
   SankeyLink,
   SankeyNode,
+  sankeyLeft,
+  sankeyRight,
+  sankeyCenter,
+  sankeyJustify,
 } from 'd3-sankey';
 
 export type NodeComponentProps<NodeDatum, LinkDatum> = {
@@ -32,7 +36,12 @@ export type SankeyProps<NodeDatum, LinkDatum> = {
    */
   size?: [number, number];
   nodeId?: (node: SankeyNode<NodeDatum, LinkDatum>) => number | string;
-  nodeAlign?: (node: SankeyNode<NodeDatum, LinkDatum>, n: number) => number;
+  nodeAlign?:
+    | ((node: SankeyNode<NodeDatum, LinkDatum>, n: number) => number)
+    | 'left'
+    | 'right'
+    | 'center'
+    | 'justify';
   nodeWidth?: number;
   nodePadding?: number;
   nodeSort?: (
@@ -71,7 +80,19 @@ export default function Sankey<NodeDatum, LinkDatum>({
   const sankey = d3sankey<NodeDatum, LinkDatum>();
   if (size) sankey.size(size);
   if (nodeId) sankey.nodeId(nodeId);
-  if (nodeAlign) sankey.nodeAlign(nodeAlign);
+  if (nodeAlign) {
+    if (nodeAlign === 'left') {
+      sankey.nodeAlign(sankeyLeft);
+    } else if (nodeAlign === 'right') {
+      sankey.nodeAlign(sankeyRight);
+    } else if (nodeAlign === 'center') {
+      sankey.nodeAlign(sankeyCenter);
+    } else if (nodeAlign === 'justify') {
+      sankey.nodeAlign(sankeyJustify);
+    } else {
+      sankey.nodeAlign(nodeAlign);
+    }
+  }
   if (nodeWidth) sankey.nodeWidth(nodeWidth);
   if (nodePadding) sankey.nodePadding(nodePadding);
   if (nodeSort) sankey.nodeSort(nodeSort);
