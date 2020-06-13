@@ -6,7 +6,7 @@ import { interpolateRainbow } from 'd3-scale-chromatic';
 import { Group } from '@vx/group';
 import { Partition } from '@vx/hierarchy';
 import { animated } from 'react-spring';
-import { useAnimatedScale } from './scales/AnimatedScale';
+import { useAnimatedScale } from '../scales/AnimatedScale';
 
 // Derived from: https://observablehq.com/@d3/zoomable-sunburst
 function Sunburst(props: any) {
@@ -43,7 +43,12 @@ function Sunburst(props: any) {
 
   return (
     <svg width={width} height={height}>
-      <Partition<any> top={margin.top} left={margin.left} root={root}>
+      <Partition<any>
+        top={margin.top}
+        left={margin.left}
+        root={root}
+        // size={[2 * Math.PI, (root.height + 1) / 2]}
+      >
         {(data) => (
           <Group top={height / 2} left={width / 2}>
             {data.descendants().map((node, i) => (

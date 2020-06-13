@@ -4,21 +4,14 @@ import { ParentSize } from '@vx/responsive';
 import preval from 'babel-plugin-preval/macro';
 
 import hierarchyData from './data/hierarchy';
-import IcicleHorizontal from './IcicleHorizontal';
-import IcicleVertical from './IcicleVertical';
-import Sunburst from './Sunburst';
-import Treemap from './Treemap';
-import Sankey from './Sankey';
+import IcicleHorizontal from './examples/IcicleHorizontal';
+import IcicleVertical from './examples/IcicleVertical';
+import Sunburst from './examples/Sunburst';
+import Treemap from './examples/Treemap';
+import Sankey from './examples/Sankey';
 import './styles.css';
 import { graphFromCsv } from './graph/utils';
-
-import graph from './data/graph';
-// const csv = preval`
-//   const fs = require('fs')
-//   module.exports = fs.readFileSync(require.resolve('./data/graph.csv'), 'utf8')
-// `;
-// const graph = graphFromCsv(csv);
-console.log({ graph });
+// import graph from './data/graph';
 
 const root = hierarchy<any>(hierarchyData)
   .eachBefore(
@@ -29,6 +22,14 @@ const root = hierarchy<any>(hierarchyData)
   .sort((a, b) => b.height - a.height || (b.value ?? 0) - (a.value ?? 0));
 
 console.log({ root });
+
+const csv = preval`
+  const fs = require('fs')
+  module.exports = fs.readFileSync(require.resolve('./data/graph.csv'), 'utf8')
+`;
+const graph = graphFromCsv(csv);
+// const graph = { nodes: root.descendants(), links: root.links() };
+console.log({ graph });
 
 export default function App() {
   const [layout, setLayout] = useState<
@@ -114,7 +115,7 @@ export default function App() {
           ) : layout === 'Sankey' ? (
             <Sankey
               graph={graph}
-              // nodeId={(d: any) => d.name}
+              nodeId={(d: any) => d.name}
               width={960}
               height={600}
             />

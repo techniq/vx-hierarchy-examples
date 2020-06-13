@@ -7,7 +7,7 @@ import { extent } from 'd3-array';
 import { LinkHorizontal } from '@vx/shape';
 import { linkHorizontal } from 'd3-shape';
 
-import Sankey from './graph/Sankey';
+import Sankey from '../graph/Sankey';
 
 const path = linkHorizontal()
   // @ts-ignore

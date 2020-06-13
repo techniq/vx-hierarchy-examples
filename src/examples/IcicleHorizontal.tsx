@@ -7,7 +7,7 @@ import { Group } from '@vx/group';
 import { Partition } from '@vx/hierarchy';
 import { animated } from 'react-spring';
 
-import { useAnimatedScale } from './scales/AnimatedScale';
+import { useAnimatedScale } from '../scales/AnimatedScale';
 
 const format = d3format(',d');
 

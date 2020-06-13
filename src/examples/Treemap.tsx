@@ -6,8 +6,8 @@ import { quantize } from 'd3-interpolate';
 import { interpolateRainbow } from 'd3-scale-chromatic';
 import { format as d3format } from 'd3-format';
 import { Treemap as VxTreemap } from '@vx/hierarchy';
-import { animated, useTransition } from 'react-spring';
-import { useAnimatedScale } from './scales/AnimatedScale';
+import { animated, useTransition, config } from 'react-spring';
+import { useAnimatedScale } from '../scales/AnimatedScale';
 
 const format = d3format(',d');
 
@@ -27,11 +27,19 @@ function Treemap(props: any) {
   const xAnimatedScale = useAnimatedScale(scaleLinear, {
     domain: [0, props.width],
     range: [0, props.width],
+    // springConfig: { duration: 1000, precision: 0.00001 },
+    // springConfig: config.gentle,
+    // springConfig: config.wobbly,
+    // springConfig: config.stiff,
+    springConfig: config.slow,
+    // springConfig: config.molasses,
   });
 
   const yAnimatedScale = useAnimatedScale(scaleLinear, {
     domain: [0, props.height],
     range: [0, props.height],
+    // springConfig: { duration: 1000, precision: 0.00001 },
+    // springConfig: config.wobbly,
   });
 
   return (
@@ -187,7 +195,6 @@ function Node(props: NodeProps) {
               />
             </animated.g>
           )
-      )}
       )}
     </>
   );
