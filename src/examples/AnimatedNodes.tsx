@@ -6,7 +6,7 @@ import { TreeLayout, TreeOrientation } from './Tree';
 
 export type AnimatedNodesProps = {
   nodes: any[];
-  getKey: (node: any) => React.Key;
+  nodeId: (node: any) => number | string;
   layout?: TreeLayout;
   orientation?: TreeOrientation;
   renderNode: (node: any, onClick: () => any) => React.ReactNode;
@@ -14,12 +14,12 @@ export type AnimatedNodesProps = {
 };
 
 function AnimatedNodes(props: AnimatedNodesProps) {
-  const { nodes, getKey, renderNode, onNodeClick } = props;
+  const { nodes, nodeId, renderNode, onNodeClick } = props;
 
   const transitions = useTransition<
     any,
     any /*{ xy: number[], opacity: number}*/
-  >(nodes, (node) => getKey(node.data), {
+  >(nodes, (node) => nodeId(node.data), {
     // config: { tension: 1000, friction: 130, mass: 5 },
     from: (node) => {
       const { x, y } = translateCoords(

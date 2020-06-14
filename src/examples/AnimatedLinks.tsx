@@ -12,7 +12,7 @@ interface LinkData {
 
 type AnimatedLinksProps = {
   links: LinkData[];
-  getKey: (node: any) => React.Key;
+  nodeId: (node: any) => string | number;
 } & Omit<LinkProps, 'sx' | 'sy' | 'tx' | 'ty' | 'ref'>;
 
 const AnimatedLink = animated(Link);
@@ -20,10 +20,10 @@ const AnimatedLink = animated(Link);
 // TODO: Offset based on nodeWidth
 
 function AnimatedLinks(props: AnimatedLinksProps) {
-  const { links, getKey, ...linkProps } = props;
+  const { links, nodeId, ...linkProps } = props;
   const transitions = useTransition<LinkData, any>(
     links,
-    (link) => `${getKey(link.source.data)}_${getKey(link.target.data)}`,
+    (link) => `${nodeId(link.source.data)}_${nodeId(link.target.data)}`,
     {
       from: ({ source, target }) => ({
         sx: source.data.x0 ?? source.x,

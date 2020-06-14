@@ -151,7 +151,7 @@ export default function App() {
           ) : layout === 'Tree' ? (
             <Tree
               data={hierarchyData}
-              getKey={(d) => d.id}
+              nodeId={(d) => d.id}
               renderNode={(node, onClick) => {
                 // console.log('node', node);
                 return (

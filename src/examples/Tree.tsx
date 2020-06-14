@@ -30,7 +30,7 @@ export interface TreeProps {
   data: any;
 
   renderNode: AnimatedNodesProps['renderNode'];
-  getKey: (node: any) => string | number;
+  nodeId: (node: any) => string | number;
   nodeWidth?: number;
   nodeHeight?: number;
 
@@ -76,13 +76,13 @@ function Tree(props: TreeProps) {
   const [layoutSize, setLayoutSize] = useState<'node' | 'layout'>('node');
 
   const root = hierarchy(data, (d: any) =>
-    expandedNodeKeys.includes(props.getKey(d)) ? d.children : null
+    expandedNodeKeys.includes(props.nodeId(d)) ? d.children : null
   );
   // Expand all children by default
   // useEffect(() => {
   //   const allNodeIds: Array<string | number> = [];
   //   const rootAllChildren = hierarchy(data);
-  //   rootAllChildren.each((node) => allNodeIds.push(props.getKey(node.data)));
+  //   rootAllChildren.each((node) => allNodeIds.push(props.nodeId(node.data)));
   //   setExpandedNodeKeys(allNodeIds);
   // }, []);
 
@@ -301,7 +301,7 @@ function Tree(props: TreeProps) {
                       >
                         <AnimatedLinks
                           links={tree.links()}
-                          getKey={props.getKey}
+                          nodeId={props.nodeId}
                           linkType={linkType}
                           layout={layout}
                           orientation={orientation}
@@ -310,12 +310,12 @@ function Tree(props: TreeProps) {
                         />
                         <AnimatedNodes
                           nodes={tree.descendants().reverse()} // render parents on top of children
-                          getKey={props.getKey}
+                          nodeId={props.nodeId}
                           layout={layout}
                           orientation={orientation}
                           renderNode={props.renderNode}
                           onNodeClick={(node) => {
-                            const nodeKey = props.getKey(node.data);
+                            const nodeKey = props.nodeId(node.data);
                             const isExpanded = expandedNodeKeys.includes(
                               nodeKey
                             );
