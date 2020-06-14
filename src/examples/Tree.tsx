@@ -9,7 +9,13 @@ import { Zoom } from '@vx/zoom';
 
 import Box from '@material-ui/core/Box';
 import IconButton from '@material-ui/core/IconButton';
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import FormControl from '@material-ui/core/FormControl';
+import Select from '@material-ui/core/Select';
+import Switch from '@material-ui/core/Switch';
 import Tooltip from '@material-ui/core/Tooltip';
+import Typography from '@material-ui/core/Typography';
 
 import FilterCenterFocusIcon from '@material-ui/icons/FilterCenterFocus';
 import ZoomInIcon from '@material-ui/icons/ZoomIn';
@@ -18,6 +24,7 @@ import ZoomOutMapIcon from '@material-ui/icons/ZoomOutMap';
 
 import Links from './Links';
 import Nodes, { NodesProps } from './Nodes';
+import HStack from '../layout/HStack';
 
 export interface TreeProps {
   data: any;
@@ -63,6 +70,11 @@ function Tree(props: TreeProps) {
     },
   } = props;
 
+  const [layout, setLayout] = useState<TreeLayout>('cartesian');
+  const [orientation, setOrientation] = useState<TreeOrientation>('horizontal');
+  const [linkType, setLinkType] = useState<LinkType>('step');
+  const [layoutSize, setLayoutSize] = useState<'node' | 'layout'>('node');
+
   const root = hierarchy(data, (d: any) =>
     expandedNodeKeys.includes(props.getKey(d)) ? d.children : null
   );
@@ -78,24 +90,29 @@ function Tree(props: TreeProps) {
   const innerHeight = height - margin.top - margin.bottom;
 
   let origin: { x: number; y: number };
-  let sizeWidth: number;
-  let sizeHeight: number;
+  let size: [number, number];
+  let nodeSize: [number, number] | undefined;
 
   if (props.layout === 'polar') {
     origin = {
       x: innerWidth / 2 + margin.left,
       y: innerHeight / 2 + margin.top,
     };
-    sizeWidth = 2 * Math.PI;
-    sizeHeight = Math.min(innerWidth, innerHeight) / 2;
+    size = [2 * Math.PI, Math.min(innerWidth, innerHeight) / 2];
   } else {
     origin = { x: margin.left, y: margin.top };
     if (props.orientation === 'vertical') {
-      sizeWidth = innerWidth;
-      sizeHeight = innerHeight;
+      size = [innerWidth, innerHeight];
+      nodeSize =
+        layoutSize === 'node' && props.nodeWidth && props.nodeHeight
+          ? [props.nodeWidth, props.nodeHeight]
+          : undefined;
     } else {
-      sizeWidth = innerHeight;
-      sizeHeight = innerWidth;
+      size = [innerHeight, innerWidth];
+      nodeSize =
+        layoutSize === 'node' && props.nodeWidth && props.nodeHeight
+          ? [props.nodeHeight, props.nodeWidth]
+          : undefined;
     }
   }
 
@@ -109,159 +126,225 @@ function Tree(props: TreeProps) {
   };
 
   return (
-    <Box
-      position="relative"
-      bgcolor="rgba(0,0,0,0.05)"
-      border={1}
-      borderColor="rgba(0,0,0,.1)"
-    >
-      <Zoom
-        width={width}
-        height={height}
-        scaleXMin={1 / 4}
-        scaleXMax={4}
-        scaleYMin={1 / 4}
-        scaleYMax={4}
-        transformMatrix={initialTransform}
-        // wheelDelta={(event: any) => {
-        //   // Disable wheel scroll for now
-        //   // return -event.deltaY > 0
-        //   //   ? { scaleX: 1.02, scaleY: 1.02 }
-        //   //   : { scaleX: 0.98, scaleY: 0.98 };
-        // }}
-        passive // handle scroll below
+    <div>
+      <HStack my={2} gridGap={8}>
+        <FormControl variant="outlined" size="small">
+          <InputLabel>Layout</InputLabel>
+          <Select
+            value={layout}
+            onChange={(event: React.ChangeEvent<{ value: unknown }>) => {
+              setLayout(event.target.value as TreeLayout);
+            }}
+            label="Layout"
+          >
+            <MenuItem value="cartesian">Cartesian</MenuItem>
+            <MenuItem value="polar">Polar</MenuItem>
+          </Select>
+        </FormControl>
+
+        <FormControl variant="outlined" size="small">
+          <InputLabel>Orientation</InputLabel>
+          <Select
+            value={orientation}
+            onChange={(event: React.ChangeEvent<{ value: unknown }>) => {
+              setOrientation(event.target.value as TreeOrientation);
+            }}
+            label="Orientation"
+          >
+            <MenuItem value="horizontal">Horizontal</MenuItem>
+            <MenuItem value="vertical">Vertical</MenuItem>
+          </Select>
+        </FormControl>
+
+        <FormControl variant="outlined" size="small">
+          <InputLabel>Link Type</InputLabel>
+          <Select
+            value={linkType}
+            onChange={(event: React.ChangeEvent<{ value: unknown }>) => {
+              setLinkType(event.target.value as LinkType);
+            }}
+            label="Link Type"
+          >
+            <MenuItem value="diagonal">Diagonal</MenuItem>
+            <MenuItem value="step">Step</MenuItem>
+            <MenuItem value="curve">Curve</MenuItem>
+            <MenuItem value="line">Line</MenuItem>
+          </Select>
+        </FormControl>
+
+        <Box border={1} borderColor="#ccc" borderRadius={4} position="relative">
+          <Box position="absolute" top={-10} left={8} bgcolor="white" px={0.5}>
+            <Typography variant="caption" color="textSecondary">
+              Size
+            </Typography>
+          </Box>
+          <HStack px={1.5}>
+            <Typography>Node</Typography>
+            <Switch
+              checked={layoutSize === 'layout'}
+              onChange={(event) => {
+                setLayoutSize(event.target.checked ? 'layout' : 'node');
+              }}
+              name="layoutSize"
+              color="primary"
+            />
+            <Typography>Layout</Typography>
+          </HStack>
+        </Box>
+      </HStack>
+
+      <Box
+        position="relative"
+        bgcolor="rgba(0,0,0,0.05)"
+        border={1}
+        borderColor="rgba(0,0,0,.1)"
       >
-        {(zoom: any) => (
-          <>
-            <Box
-              position="absolute"
-              top={16}
-              right={16}
-              bgcolor="rgba(211, 211, 211, .9)"
-              borderRadius={24}
-            >
-              <IconButton
-                onClick={() => zoom.scale({ scaleX: 1.2, scaleY: 1.2 })}
+        <Zoom
+          width={width}
+          height={height}
+          scaleXMin={1 / 4}
+          scaleXMax={4}
+          scaleYMin={1 / 4}
+          scaleYMax={4}
+          transformMatrix={initialTransform}
+          // wheelDelta={(event: any) => {
+          //   // Disable wheel scroll for now
+          //   // return -event.deltaY > 0
+          //   //   ? { scaleX: 1.02, scaleY: 1.02 }
+          //   //   : { scaleX: 0.98, scaleY: 0.98 };
+          // }}
+          passive // handle scroll below
+        >
+          {(zoom: any) => (
+            <>
+              <Box
+                position="absolute"
+                top={16}
+                right={16}
+                bgcolor="rgba(211, 211, 211, .9)"
+                borderRadius={24}
               >
-                <Tooltip title="Zoom in">
-                  <ZoomInIcon />
-                </Tooltip>
-              </IconButton>
+                <IconButton
+                  onClick={() => zoom.scale({ scaleX: 1.2, scaleY: 1.2 })}
+                >
+                  <Tooltip title="Zoom in">
+                    <ZoomInIcon />
+                  </Tooltip>
+                </IconButton>
 
-              <IconButton
-                onClick={() => zoom.scale({ scaleX: 0.8, scaleY: 0.8 })}
+                <IconButton
+                  onClick={() => zoom.scale({ scaleX: 0.8, scaleY: 0.8 })}
+                >
+                  <Tooltip title="Zoom out">
+                    <ZoomOutIcon />
+                  </Tooltip>
+                </IconButton>
+
+                <IconButton onClick={zoom.center}>
+                  <Tooltip title="Center">
+                    <FilterCenterFocusIcon />
+                  </Tooltip>
+                </IconButton>
+
+                <IconButton onClick={zoom.reset}>
+                  <Tooltip title="Reset">
+                    <ZoomOutMapIcon />
+                  </Tooltip>
+                </IconButton>
+              </Box>
+
+              <svg
+                width={width}
+                height={height}
+                style={{ cursor: zoom.isDragging ? 'grabbing' : 'grab' }}
               >
-                <Tooltip title="Zoom out">
-                  <ZoomOutIcon />
-                </Tooltip>
-              </IconButton>
-
-              <IconButton onClick={zoom.center}>
-                <Tooltip title="Center">
-                  <FilterCenterFocusIcon />
-                </Tooltip>
-              </IconButton>
-
-              <IconButton onClick={zoom.reset}>
-                <Tooltip title="Reset">
-                  <ZoomOutMapIcon />
-                </Tooltip>
-              </IconButton>
-            </Box>
-
-            <svg
-              width={width}
-              height={height}
-              style={{ cursor: zoom.isDragging ? 'grabbing' : 'grab' }}
-            >
-              <VxTree
-                root={root}
-                {...(props.nodeWidth != null && props.nodeHeight != null
-                  ? {
-                      nodeSize:
-                        props.orientation === 'vertical'
-                          ? [props.nodeWidth, props.nodeHeight]
-                          : [props.nodeHeight, props.nodeWidth],
-                    }
-                  : {
-                      size: [sizeWidth, sizeHeight],
-                    })}
-                // separation={(a: any, b: any) =>
-                //   (a.parent == b.parent ? 1 : 0.5) / a.depth
-                // }
-              >
-                {(tree: any) => (
-                  <>
-                    <rect
-                      width={width}
-                      height={height}
-                      fill="transparent"
-                      onWheel={(event) => {
-                        event.preventDefault();
-                        // zoom.handleWheel(event);
-                      }}
-                      onMouseDown={zoom.dragStart}
-                      onMouseMove={zoom.dragMove}
-                      onMouseUp={zoom.dragEnd}
-                      onMouseLeave={() => {
-                        if (!zoom.isDragging) return;
-                        zoom.dragEnd();
-                      }}
-                      onDoubleClick={(event) => {
-                        if (event.altKey) {
-                          const point = localPoint(event);
-                          zoom.scale({ scaleX: 0.5, scaleY: 0.5, point });
-                        } else {
-                          const point = localPoint(event);
-                          zoom.scale({ scaleX: 2.0, scaleY: 2.0, point });
-                        }
-                      }}
-                    />
-
-                    <Group transform={zoom.toString()}>
-                      <Links
-                        links={tree.links()}
-                        getKey={props.getKey}
-                        linkType={props.linkType}
-                        layout={props.layout}
-                        orientation={props.orientation}
-                        stepPercent={props.stepPercent}
-                        stroke="rgba(0,0,0,.2)"
-                      />
-                      <Nodes
-                        nodes={tree.descendants().reverse()} // render parents on top of children
-                        getKey={props.getKey}
-                        layout={props.layout}
-                        orientation={props.orientation}
-                        renderNode={props.renderNode}
-                        onNodeClick={(node) => {
-                          const nodeKey = props.getKey(node.data);
-                          const isExpanded = expandedNodeKeys.includes(nodeKey);
-                          if (isExpanded) {
-                            setExpandedNodeKeys((prevState) =>
-                              prevState.filter((key) => key !== nodeKey)
-                            );
+                <VxTree
+                  root={root}
+                  size={size}
+                  nodeSize={nodeSize}
+                  // separation={(a: any, b: any) =>
+                  //   (a.parent == b.parent ? 1 : 0.5) / a.depth
+                  // }
+                >
+                  {(tree: any) => (
+                    <>
+                      <rect
+                        width={width}
+                        height={height}
+                        fill="transparent"
+                        onWheel={(event) => {
+                          event.preventDefault();
+                          // zoom.handleWheel(event);
+                        }}
+                        onMouseDown={zoom.dragStart}
+                        onMouseMove={zoom.dragMove}
+                        onMouseUp={zoom.dragEnd}
+                        onMouseLeave={() => {
+                          if (!zoom.isDragging) return;
+                          zoom.dragEnd();
+                        }}
+                        onDoubleClick={(event) => {
+                          if (event.altKey) {
+                            const point = localPoint(event);
+                            zoom.scale({ scaleX: 0.5, scaleY: 0.5, point });
                           } else {
-                            // Probably not good to edit the node directly
-                            node.data.x0 = node.x;
-                            node.data.y0 = node.y;
-
-                            setExpandedNodeKeys((prevState) => [
-                              ...prevState,
-                              nodeKey,
-                            ]);
+                            const point = localPoint(event);
+                            zoom.scale({ scaleX: 2.0, scaleY: 2.0, point });
                           }
                         }}
                       />
-                    </Group>
-                  </>
-                )}
-              </VxTree>
-            </svg>
-          </>
-        )}
-      </Zoom>
-    </Box>
+
+                      <Group
+                        // top={origin.y}
+                        // left={origin.x}
+                        transform={zoom.toString()}
+                      >
+                        <Links
+                          links={tree.links()}
+                          getKey={props.getKey}
+                          linkType={linkType}
+                          layout={layout}
+                          orientation={orientation}
+                          stepPercent={props.stepPercent}
+                          stroke="#ccc"
+                        />
+                        <Nodes
+                          nodes={tree.descendants().reverse()} // render parents on top of children
+                          getKey={props.getKey}
+                          layout={layout}
+                          orientation={orientation}
+                          renderNode={props.renderNode}
+                          onNodeClick={(node) => {
+                            const nodeKey = props.getKey(node.data);
+                            const isExpanded = expandedNodeKeys.includes(
+                              nodeKey
+                            );
+                            if (isExpanded) {
+                              setExpandedNodeKeys((prevState) =>
+                                prevState.filter((key) => key !== nodeKey)
+                              );
+                            } else {
+                              // Probably not good to edit the node directly
+                              node.data.x0 = node.x;
+                              node.data.y0 = node.y;
+
+                              setExpandedNodeKeys((prevState) => [
+                                ...prevState,
+                                nodeKey,
+                              ]);
+                            }
+                          }}
+                        />
+                      </Group>
+                    </>
+                  )}
+                </VxTree>
+              </svg>
+            </>
+          )}
+        </Zoom>
+      </Box>
+    </div>
   );
 }
 
