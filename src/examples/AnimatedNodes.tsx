@@ -4,7 +4,7 @@ import { useTransition, animated } from 'react-spring';
 import { findCollapsedParent, translateCoords } from './utils/treeUtils';
 import { TreeLayout, TreeOrientation } from './Tree';
 
-export type NodesProps = {
+export type AnimatedNodesProps = {
   nodes: any[];
   getKey: (node: any) => React.Key;
   layout?: TreeLayout;
@@ -13,13 +13,13 @@ export type NodesProps = {
   onNodeClick: (node: any) => any;
 };
 
-function Nodes(props: NodesProps) {
+function AnimatedNodes(props: AnimatedNodesProps) {
   const { nodes, getKey, renderNode, onNodeClick } = props;
 
   const transitions = useTransition<
     any,
     any /*{ xy: number[], opacity: number}*/
-  >(props.nodes, (node) => getKey(node.data), {
+  >(nodes, (node) => getKey(node.data), {
     // config: { tension: 1000, friction: 130, mass: 5 },
     from: (node) => {
       const { x, y } = translateCoords(
@@ -98,4 +98,4 @@ function Nodes(props: NodesProps) {
   );
 }
 
-export default Nodes;
+export default AnimatedNodes;

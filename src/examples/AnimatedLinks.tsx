@@ -10,7 +10,7 @@ interface LinkData {
   target: any;
 }
 
-type LinksProps = {
+type AnimatedLinksProps = {
   links: LinkData[];
   getKey: (node: any) => React.Key;
 } & Omit<LinkProps, 'sx' | 'sy' | 'tx' | 'ty' | 'ref'>;
@@ -19,7 +19,7 @@ const AnimatedLink = animated(Link);
 
 // TODO: Offset based on nodeWidth
 
-function Links(props: LinksProps) {
+function AnimatedLinks(props: AnimatedLinksProps) {
   const { links, getKey, ...linkProps } = props;
   const transitions = useTransition<LinkData, any>(
     links,
@@ -71,4 +71,4 @@ function Links(props: LinksProps) {
   );
 }
 
-export default Links;
+export default AnimatedLinks;

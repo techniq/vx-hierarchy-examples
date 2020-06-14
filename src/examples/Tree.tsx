@@ -22,14 +22,14 @@ import ZoomInIcon from '@material-ui/icons/ZoomIn';
 import ZoomOutIcon from '@material-ui/icons/ZoomOut';
 import ZoomOutMapIcon from '@material-ui/icons/ZoomOutMap';
 
-import Links from './Links';
-import Nodes, { NodesProps } from './Nodes';
+import AnimatedLinks from './AnimatedLinks';
+import AnimatedNodes, { AnimatedNodesProps } from './AnimatedNodes';
 import HStack from '../layout/HStack';
 
 export interface TreeProps {
   data: any;
 
-  renderNode: NodesProps['renderNode'];
+  renderNode: AnimatedNodesProps['renderNode'];
   getKey: (node: any) => string | number;
   nodeWidth?: number;
   nodeHeight?: number;
@@ -299,7 +299,7 @@ function Tree(props: TreeProps) {
                         // left={origin.x}
                         transform={zoom.toString()}
                       >
-                        <Links
+                        <AnimatedLinks
                           links={tree.links()}
                           getKey={props.getKey}
                           linkType={linkType}
@@ -308,7 +308,7 @@ function Tree(props: TreeProps) {
                           stepPercent={props.stepPercent}
                           stroke="#ccc"
                         />
-                        <Nodes
+                        <AnimatedNodes
                           nodes={tree.descendants().reverse()} // render parents on top of children
                           getKey={props.getKey}
                           layout={layout}
