@@ -13,6 +13,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
+import Slider from '@material-ui/core/Slider';
 import Switch from '@material-ui/core/Switch';
 import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
@@ -73,6 +74,7 @@ function Tree(props: TreeProps) {
   const [layout, setLayout] = useState<TreeLayout>('cartesian');
   const [orientation, setOrientation] = useState<TreeOrientation>('horizontal');
   const [linkType, setLinkType] = useState<LinkType>('step');
+  const [stepPercent, setStepPercent] = useState<number>(0.5);
   const [layoutSize, setLayoutSize] = useState<'node' | 'layout'>('node');
 
   const root = hierarchy(data, (d: any) =>
@@ -171,6 +173,32 @@ function Tree(props: TreeProps) {
             <MenuItem value="line">Line</MenuItem>
           </Select>
         </FormControl>
+
+        <Box
+          border={1}
+          borderColor="#ccc"
+          borderRadius={4}
+          position="relative"
+          display="flex"
+          alignItems="center"
+          px={2}
+          height={38}
+        >
+          <Box position="absolute" top={-10} left={8} bgcolor="white" px={0.5}>
+            <Typography variant="caption" color="textSecondary">
+              Step Percent
+            </Typography>
+          </Box>
+          <Slider
+            value={stepPercent}
+            onChange={(event, value) => {
+              setStepPercent(value as number);
+            }}
+            step={0.1}
+            min={0}
+            max={1}
+          />
+        </Box>
 
         <Box border={1} borderColor="#ccc" borderRadius={4} position="relative">
           <Box position="absolute" top={-10} left={8} bgcolor="white" px={0.5}>
@@ -305,7 +333,7 @@ function Tree(props: TreeProps) {
                           linkType={linkType}
                           layout={layout}
                           orientation={orientation}
-                          stepPercent={props.stepPercent}
+                          stepPercent={stepPercent}
                           stroke="#ccc"
                         />
                         <AnimatedNodes

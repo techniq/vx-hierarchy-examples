@@ -5,7 +5,6 @@ import preval from 'babel-plugin-preval/macro';
 
 import './styles.css';
 
-import hierarchyData from './data/hierarchy';
 import IcicleHorizontal from './examples/IcicleHorizontal';
 import IcicleVertical from './examples/IcicleVertical';
 import Sunburst from './examples/Sunburst';
@@ -15,6 +14,7 @@ import Treemap from './examples/Treemap';
 
 import Node from './examples/Node';
 
+import hierarchyData from './data/hierarchy';
 import { graphFromCsv } from './graph/utils';
 import graph from './data/graph';
 
