@@ -15,6 +15,7 @@ import Treemap from './examples/Treemap';
 import Node from './examples/Node';
 
 import hierarchyData from './data/hierarchy';
+// import hierarchyData from './data/simpleHierarchy';
 import { graphFromCsv } from './graph/utils';
 import graph from './data/graph';
 

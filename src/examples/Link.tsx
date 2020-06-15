@@ -85,7 +85,10 @@ function Link(props: LinkProps) {
 
   return (
     <LinkComponent
-      data={{ source: { x: sx, y: sy }, target: { x: tx, y: ty } }}
+      data={{
+        source: { x: sx, y: sy },
+        target: { x: tx, y: ty },
+      }}
       percent={stepPercent}
       fill="none"
       {...rootProps}

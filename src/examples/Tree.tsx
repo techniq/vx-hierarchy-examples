@@ -95,7 +95,7 @@ function Tree(props: TreeProps) {
   let size: [number, number];
   let nodeSize: [number, number] | undefined;
 
-  if (props.layout === 'polar') {
+  if (layout === 'polar') {
     origin = {
       x: innerWidth / 2 + margin.left,
       y: innerHeight / 2 + margin.top,
@@ -103,7 +103,7 @@ function Tree(props: TreeProps) {
     size = [2 * Math.PI, Math.min(innerWidth, innerHeight) / 2];
   } else {
     origin = { x: margin.left, y: margin.top };
-    if (props.orientation === 'vertical') {
+    if (orientation === 'vertical') {
       size = [innerWidth, innerHeight];
       nodeSize =
         layoutSize === 'node' && props.nodeWidth && props.nodeHeight
@@ -121,8 +121,8 @@ function Tree(props: TreeProps) {
   const initialTransform = {
     scaleX: 1,
     scaleY: 1,
-    translateX: props.orientation === 'vertical' ? innerWidth / 2 : origin.x,
-    translateY: props.orientation === 'vertical' ? origin.y : innerHeight / 2,
+    translateX: orientation === 'vertical' ? innerWidth / 2 : origin.x,
+    translateY: orientation === 'vertical' ? origin.y : innerHeight / 2,
     skewX: 0,
     skewY: 0,
   };
