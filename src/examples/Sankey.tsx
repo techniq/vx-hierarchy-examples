@@ -7,7 +7,16 @@ import { extent } from 'd3-array';
 import { LinkHorizontal } from '@vx/shape';
 import { linkHorizontal } from 'd3-shape';
 
+import Box from '@material-ui/core/Box';
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import FormControl from '@material-ui/core/FormControl';
+import Select from '@material-ui/core/Select';
+import Slider from '@material-ui/core/Slider';
+import Typography from '@material-ui/core/Typography';
+
 import Sankey, { SankeyProps } from '../graph/Sankey';
+import HStack from '../layout/HStack';
 
 const path = linkHorizontal()
   // @ts-ignore
@@ -39,48 +48,51 @@ function SankeyExample(props: any) {
 
   return (
     <div>
-      <label>
-        <input
-          type="radio"
-          checked={nodeAlign === 'justify'}
-          onChange={() => setNodeAlign('justify')}
-        />
-        justify
-      </label>
-      <label>
-        <input
-          type="radio"
-          checked={nodeAlign === 'left'}
-          onChange={() => setNodeAlign('left')}
-        />
-        left
-      </label>
-      <label>
-        <input
-          type="radio"
-          checked={nodeAlign === 'center'}
-          onChange={() => setNodeAlign('center')}
-        />
-        center
-      </label>
-      <label>
-        <input
-          type="radio"
-          checked={nodeAlign === 'right'}
-          onChange={() => setNodeAlign('right')}
-        />
-        right
-      </label>
-      <div>
-        <input
-          type="range"
-          min="0"
-          max="20"
-          value={nodePadding}
-          onChange={(e) => setNodePadding(+e.target.value)}
-        />
-        {nodePadding}
-      </div>
+      <HStack my={2} gridGap={8}>
+        <FormControl variant="outlined" size="small">
+          <InputLabel>Layout</InputLabel>
+          <Select
+            label="Node Align"
+            value={nodeAlign}
+            onChange={(event: React.ChangeEvent<{ value: unknown }>) => {
+              setNodeAlign(
+                event.target.value as SankeyProps<unknown, unknown>['nodeAlign']
+              );
+            }}
+          >
+            <MenuItem value="justify">Justify</MenuItem>
+            <MenuItem value="left">Left</MenuItem>
+            <MenuItem value="center">Center</MenuItem>
+            <MenuItem value="right">Right</MenuItem>
+          </Select>
+        </FormControl>
+
+        <Box
+          border={1}
+          borderColor="#ccc"
+          borderRadius={4}
+          position="relative"
+          display="flex"
+          alignItems="center"
+          px={2}
+          height={38}
+        >
+          <Box position="absolute" top={-10} left={8} bgcolor="white" px={0.5}>
+            <Typography variant="caption" color="textSecondary">
+              Node Padding
+            </Typography>
+          </Box>
+          <Slider
+            value={nodePadding}
+            onChange={(event, value) => {
+              setNodePadding(value as number);
+            }}
+            min={0}
+            max={20}
+            step={1}
+          />
+        </Box>
+      </HStack>
       <svg
         width={width + margin.left + margin.right}
         height={height + margin.top + margin.bottom}

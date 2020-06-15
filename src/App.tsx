@@ -1,9 +1,21 @@
 import React, { useState } from 'react';
-import { hierarchy } from 'd3-hierarchy';
+import {
+  hierarchy,
+  stratify,
+  HierarchyNode,
+  ClusterLayout,
+} from 'd3-hierarchy';
 import { ParentSize } from '@vx/responsive';
 import preval from 'babel-plugin-preval/macro';
 
 import './styles.css';
+
+import Box from '@material-ui/core/Box';
+import Button from '@material-ui/core/Button';
+import Drawer from '@material-ui/core/Drawer';
+import TextField from '@material-ui/core/TextField';
+
+import DatabaseIcon from 'mdi-material-ui/Database';
 
 import IcicleHorizontal from './examples/IcicleHorizontal';
 import IcicleVertical from './examples/IcicleVertical';
@@ -18,16 +30,7 @@ import hierarchyData from './data/hierarchy';
 // import hierarchyData from './data/simpleHierarchy';
 import { graphFromCsv } from './graph/utils';
 import graph from './data/graph';
-
-const root = hierarchy<any>(hierarchyData)
-  .eachBefore(
-    (d) => (d.data.id = (d.parent ? d.parent.data.id + '.' : '') + d.data.name)
-  )
-  .sum((d) => d.size)
-  // .sort((a, b) => (b.value ?? 0) - (a.value ?? 0));
-  .sort((a, b) => b.height - a.height || (b.value ?? 0) - (a.value ?? 0));
-
-console.log({ root });
+import { AppleTabs, AppleTab } from './layout/AppleTabs';
 
 // const csv = preval`
 //   const fs = require('fs')
@@ -56,65 +59,61 @@ export default function App() {
     | 'Tree'
   >('Tree');
 
+  const [showDrawer, setShowDrawer] = useState(false);
+  const [hierarchyCsv, setHierarchyCsv] = useState<string | null>(null);
+
+  const root = hierarchy<any>(hierarchyData)
+    .eachBefore(
+      (d) =>
+        (d.data.id = (d.parent ? d.parent.data.id + '.' : '') + d.data.name)
+    )
+    .sum((d) => d.size)
+    // .sort((a, b) => (b.value ?? 0) - (a.value ?? 0));
+    .sort((a, b) => b.height - a.height || (b.value ?? 0) - (a.value ?? 0));
+
+  // let root: HierarchyNode<any> = hierarchy({ name: 'root', chidren: [] });
+  // try {
+  //   if (hierarchyCsv) {
+  //     root = hierarchyFromCsv(hierarchyCsv)
+  //       .eachBefore(
+  //         (d) =>
+  //           (d.data.id = (d.parent ? d.parent.data.id + '.' : '') + d.data.name)
+  //       )
+  //       .sum((d) => {
+  //         console.log({ d });
+  //         // return d.size;
+  //         return +d.value;
+  //       })
+  //       // .sort((a, b) => (b.value ?? 0) - (a.value ?? 0));
+  //       .sort((a, b) => b.height - a.height || (b.value ?? 0) - (a.value ?? 0));
+  //   }
+  // } catch (e) {
+  //   console.log(e);
+  // }
+
+  console.log({ root });
+
   return (
     <div>
-      <div
-        style={{
-          display: 'inline-grid',
-          gridGap: 8,
-          gridAutoFlow: 'column',
-          gridAutoColumns: 'auto',
+      <AppleTabs
+        value={layout}
+        onChange={(event: React.ChangeEvent<{}>, newValue: typeof layout) => {
+          setLayout(newValue as typeof layout);
         }}
       >
-        <label>
-          <input
-            type="radio"
-            checked={layout === 'IcicleVertical'}
-            onChange={() => setLayout('IcicleVertical')}
-          />
-          Icicle Vertical
-        </label>
-        <label>
-          <input
-            type="radio"
-            checked={layout === 'IcicleHorizontal'}
-            onChange={() => setLayout('IcicleHorizontal')}
-          />
-          Icicle Horizontal
-        </label>
-        <label>
-          <input
-            type="radio"
-            checked={layout === 'Treemap'}
-            onChange={() => setLayout('Treemap')}
-          />
-          Treemap
-        </label>
-        <label>
-          <input
-            type="radio"
-            checked={layout === 'Sunburst'}
-            onChange={() => setLayout('Sunburst')}
-          />
-          Sunburst
-        </label>
-        <label>
-          <input
-            type="radio"
-            checked={layout === 'Sankey'}
-            onChange={() => setLayout('Sankey')}
-          />
-          Sankey
-        </label>
-        <label>
-          <input
-            type="radio"
-            checked={layout === 'Tree'}
-            onChange={() => setLayout('Tree')}
-          />
-          Tree
-        </label>
-      </div>
+        {[
+          'IcicleVertical',
+          'IcicleHorizontal',
+          'Treemap',
+          'Sunburst',
+          'Sankey',
+          'Tree',
+        ].map((layoutName) => {
+          return (
+            <AppleTab label={layoutName} value={layoutName} key={layoutName} />
+          );
+        })}
+      </AppleTabs>
 
       <ParentSize>
         {(size) =>
@@ -168,6 +167,48 @@ export default function App() {
           ) : null)
         }
       </ParentSize>
+
+      <Box
+        position="fixed"
+        bottom={0}
+        left={0}
+        width="100%"
+        zIndex={1}
+        p={1}
+        borderTop={1}
+        borderColor="#ddd"
+        bgcolor="#fff"
+      >
+        <Button
+          onClick={() => setShowDrawer((prevState) => !prevState)}
+          variant="outlined"
+          startIcon={<DatabaseIcon />}
+        >
+          Edit Data
+        </Button>
+        <Drawer
+          anchor="bottom"
+          open={showDrawer}
+          onClose={() => setShowDrawer(false)}
+        >
+          <Box p={2}>
+            <TextField
+              label="CSV"
+              placeholder="parent,child,value"
+              multiline
+              variant="outlined"
+              fullWidth
+              InputLabelProps={{
+                shrink: true,
+              }}
+              value={hierarchyCsv}
+              onChange={(e) => {
+                setHierarchyCsv(e.target.value || null);
+              }}
+            />
+          </Box>
+        </Drawer>
+      </Box>
     </div>
   );
 }

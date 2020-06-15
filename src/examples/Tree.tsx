@@ -133,11 +133,11 @@ function Tree(props: TreeProps) {
         <FormControl variant="outlined" size="small">
           <InputLabel>Layout</InputLabel>
           <Select
+            label="Layout"
             value={layout}
             onChange={(event: React.ChangeEvent<{ value: unknown }>) => {
               setLayout(event.target.value as TreeLayout);
             }}
-            label="Layout"
           >
             <MenuItem value="cartesian">Cartesian</MenuItem>
             <MenuItem value="polar">Polar</MenuItem>
@@ -147,11 +147,11 @@ function Tree(props: TreeProps) {
         <FormControl variant="outlined" size="small">
           <InputLabel>Orientation</InputLabel>
           <Select
+            label="Orientation"
             value={orientation}
             onChange={(event: React.ChangeEvent<{ value: unknown }>) => {
               setOrientation(event.target.value as TreeOrientation);
             }}
-            label="Orientation"
           >
             <MenuItem value="horizontal">Horizontal</MenuItem>
             <MenuItem value="vertical">Vertical</MenuItem>
@@ -161,11 +161,11 @@ function Tree(props: TreeProps) {
         <FormControl variant="outlined" size="small">
           <InputLabel>Link Type</InputLabel>
           <Select
+            label="Link Type"
             value={linkType}
             onChange={(event: React.ChangeEvent<{ value: unknown }>) => {
               setLinkType(event.target.value as LinkType);
             }}
-            label="Link Type"
           >
             <MenuItem value="diagonal">Diagonal</MenuItem>
             <MenuItem value="step">Step</MenuItem>
@@ -194,9 +194,9 @@ function Tree(props: TreeProps) {
             onChange={(event, value) => {
               setStepPercent(value as number);
             }}
-            step={0.1}
             min={0}
             max={1}
+            step={0.1}
           />
         </Box>
 
