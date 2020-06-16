@@ -52,7 +52,7 @@ export interface TreeProps {
 
 export type TreeLayout = 'cartesian' | 'polar';
 export type TreeOrientation = 'horizontal' | 'vertical';
-export type LinkType = 'diagonal' | 'step' | 'curve' | 'line'; // | 'elbow'
+export type LinkType = 'diagonal' | 'step' | 'curve' | 'line' | 'elbow';
 
 function Tree(props: TreeProps) {
   const [expandedNodeKeys, setExpandedNodeKeys] = useState<
@@ -171,6 +171,7 @@ function Tree(props: TreeProps) {
             <MenuItem value="step">Step</MenuItem>
             <MenuItem value="curve">Curve</MenuItem>
             <MenuItem value="line">Line</MenuItem>
+            <MenuItem value="elbow">Elbow</MenuItem>
           </Select>
         </FormControl>
 

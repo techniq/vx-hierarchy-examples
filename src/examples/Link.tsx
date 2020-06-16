@@ -15,7 +15,8 @@ import {
   LinkRadialLine,
 } from '@vx/shape';
 import { TreeLayout, TreeOrientation, LinkType } from './Tree';
-// import { LinkHorizontalElbow, LinkVerticalElbow } from './elbow';
+import LinkHorizontalElbow from '../shapes/link/elbow/LinkHorizontalElbow';
+import LinkVerticalElbow from '../shapes/link/elbow/LinkVerticalElbow';
 
 // TODO: Add label support - https://codesandbox.io/s/431xpyo4jx
 
@@ -52,6 +53,8 @@ function Link(props: LinkProps) {
       LinkComponent = LinkRadialCurve;
     } else if (linkType === 'line') {
       LinkComponent = LinkRadialLine;
+    } else if (linkType === 'elbow') {
+      LinkComponent = LinkRadialStep; // TODO: Does it make sense to create LinkRadialElbow
     } else {
       LinkComponent = LinkRadial;
     }
@@ -63,8 +66,8 @@ function Link(props: LinkProps) {
         LinkComponent = LinkVerticalCurve;
       } else if (linkType === 'line') {
         LinkComponent = LinkVerticalLine;
-        // } else if (linkType === 'elbow') {
-        //   LinkComponent = LinkVerticalElbow
+      } else if (linkType === 'elbow') {
+        LinkComponent = LinkVerticalElbow;
       } else {
         LinkComponent = LinkVertical;
       }
@@ -75,8 +78,8 @@ function Link(props: LinkProps) {
         LinkComponent = LinkHorizontalCurve;
       } else if (linkType === 'line') {
         LinkComponent = LinkHorizontalLine;
-        // } else if (linkType === 'elbow') {
-        //   LinkComponent = LinkHorizontalElbow
+      } else if (linkType === 'elbow') {
+        LinkComponent = LinkHorizontalElbow;
       } else {
         LinkComponent = LinkHorizontal;
       }
