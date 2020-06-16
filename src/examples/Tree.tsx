@@ -129,7 +129,7 @@ function Tree(props: TreeProps) {
 
   return (
     <div>
-      <HStack my={2} gridGap={8}>
+      <HStack mx={1} my={2} gridGap={8}>
         <FormControl variant="outlined" size="small">
           <InputLabel>Layout</InputLabel>
           <Select
@@ -198,6 +198,8 @@ function Tree(props: TreeProps) {
             min={0}
             max={1}
             step={0.1}
+            valueLabelDisplay="auto"
+            valueLabelFormat={(x) => `${x * 100}%`}
           />
         </Box>
 

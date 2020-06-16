@@ -48,7 +48,7 @@ function SankeyExample(props: any) {
 
   return (
     <div>
-      <HStack my={2} gridGap={8}>
+      <HStack mx={1} my={2} gridGap={8}>
         <FormControl variant="outlined" size="small">
           <InputLabel>Layout</InputLabel>
           <Select
