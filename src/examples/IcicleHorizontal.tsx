@@ -20,7 +20,7 @@ function IcicleHorizontal(props: any) {
   } = props;
 
   const color = scaleOrdinal(
-    quantize(interpolateRainbow, root.children.length + 1)
+    quantize(interpolateRainbow, root.children?.length + 1)
   );
 
   const xAnimatedScale = useAnimatedScale(scaleLinear, {

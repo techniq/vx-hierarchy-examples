@@ -20,7 +20,7 @@ function IcicleVertical(props: any) {
   } = props;
 
   const color = scaleOrdinal(
-    quantize(interpolateRainbow, root.children.length + 1)
+    quantize(interpolateRainbow, root.children?.length ?? 0 + 1)
   );
 
   const xAnimatedScale = useAnimatedScale(scaleLinear, {
@@ -101,7 +101,7 @@ function IcicleVertical(props: any) {
                   fill={
                     node.children
                       ? '#ddd'
-                      : color(node.data.id.split('.').slice(0, 2).join('.'))
+                      : color(node.data.id?.split('.').slice(0, 2).join('.'))
                   }
                   fillOpacity={node.children ? 1 : 0.6}
                 />

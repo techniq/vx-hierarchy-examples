@@ -13,6 +13,9 @@ import './styles.css';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 import Drawer from '@material-ui/core/Drawer';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Radio from '@material-ui/core/Radio';
+import RadioGroup from '@material-ui/core/RadioGroup';
 import TextField from '@material-ui/core/TextField';
 
 import DatabaseIcon from 'mdi-material-ui/Database';
@@ -31,6 +34,7 @@ import hierarchyData from './data/hierarchy';
 import { graphFromCsv } from './graph/utils';
 import graph from './data/graph';
 import { AppleTabs, AppleTab } from './layout/AppleTabs';
+import { TwitterTabs, TwitterTab } from './layout/TwitterTabs';
 
 // const csv = preval`
 //   const fs = require('fs')
@@ -95,25 +99,31 @@ export default function App() {
 
   return (
     <div>
-      <AppleTabs
-        value={layout}
-        onChange={(event: React.ChangeEvent<{}>, newValue: typeof layout) => {
-          setLayout(newValue as typeof layout);
-        }}
-      >
-        {[
-          'IcicleVertical',
-          'IcicleHorizontal',
-          'Treemap',
-          'Sunburst',
-          'Sankey',
-          'Tree',
-        ].map((layoutName) => {
-          return (
-            <AppleTab label={layoutName} value={layoutName} key={layoutName} />
-          );
-        })}
-      </AppleTabs>
+      <Box p={1}>
+        <AppleTabs
+          value={layout}
+          onChange={(event: React.ChangeEvent<{}>, newValue: typeof layout) => {
+            setLayout(newValue as typeof layout);
+          }}
+        >
+          {[
+            'IcicleVertical',
+            'IcicleHorizontal',
+            'Treemap',
+            'Sunburst',
+            'Sankey',
+            'Tree',
+          ].map((layoutName) => {
+            return (
+              <AppleTab
+                label={layoutName}
+                value={layoutName}
+                key={layoutName}
+              />
+            );
+          })}
+        </AppleTabs>
+      </Box>
 
       <ParentSize>
         {(size) =>
@@ -123,21 +133,19 @@ export default function App() {
           ) : layout === 'IcicleHorizontal' ? (
             <IcicleHorizontal root={root} width={size.width} height={800} />
           ) : layout === 'Sunburst' ? (
-            <div
-              style={{
-                width: '100vw',
-                height: '100vh',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}
+            <Box
+              width="100vw"
+              height="100vh"
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
             >
               <Sunburst
                 root={root}
                 width={Math.min(size.width, size.height) * 0.8}
                 height={Math.min(size.width, size.height) * 0.8}
               />
-            </div>
+            </Box>
           ) : layout === 'Sankey' ? (
             <Sankey
               graph={graph}
@@ -191,7 +199,33 @@ export default function App() {
           open={showDrawer}
           onClose={() => setShowDrawer(false)}
         >
+          <TwitterTabs
+            value="hierarchy"
+            // value={layout}
+            // onChange={(
+            //   event: React.ChangeEvent<{}>,
+            //   newValue: typeof layout
+            // ) => {
+            //   setLayout(newValue as typeof layout);
+            // }}
+          >
+            <TwitterTab label="Hierarchy" value="hierarchy" />
+            <TwitterTab label="Network" value="network" />
+          </TwitterTabs>
           <Box p={2}>
+            <RadioGroup
+              name="dataType"
+              value="csv" /*value={value} onChange={handleChange}*/
+              row
+            >
+              <FormControlLabel label="CSV" value="csv" control={<Radio />} />
+              <FormControlLabel
+                label="Example"
+                value="example"
+                control={<Radio />}
+              />
+            </RadioGroup>
+
             <TextField
               label="CSV"
               placeholder="parent,child,value"

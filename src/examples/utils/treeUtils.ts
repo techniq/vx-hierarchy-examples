@@ -1,5 +1,7 @@
 import { pointRadial } from 'd3-shape';
 import { TreeLayout, TreeOrientation } from '../Tree';
+import { csvParse } from 'd3-dsv';
+import { stratify } from 'd3-hierarchy';
 
 export function findCollapsedParent(node: any): any | null {
   if (!node.data.isExpanded) {
@@ -48,4 +50,14 @@ export function childCountByDepth(root: any) {
   childCount(0, root);
 
   return result;
+}
+
+export function hierarchyFromCsv(csv: string) {
+  const table = csvParse(csv);
+
+  var root = stratify<any>()
+    .id((d) => d.name)
+    .parentId((d) => d.parent)(table);
+
+  return root;
 }
