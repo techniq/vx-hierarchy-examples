@@ -264,7 +264,7 @@ function Tree(props: TreeProps) {
                 </IconButton>
 
                 <IconButton
-                  onClick={() => zoom.scale({ scaleX: 0.8, scaleY: 0.8 })}
+                  onClick={() => zoom.scale({ scaleX: 1 / 1.2, scaleY: 1 / 1.2 })}
                 >
                   <Tooltip title="Zoom out">
                     <ZoomOutIcon />
